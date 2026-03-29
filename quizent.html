@@ -1,0 +1,1299 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>QUIZENT - Advanced CBT Platform</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #6366f1;
+            --primary-dark: #4f46e5;
+            --secondary: #10b981;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+            --info: #3b82f6;
+            --dark: #1e293b;
+            --light: #f8fafc;
+            --gray: #64748b;
+            --border: #e2e8f0;
+            --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+            --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+            --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1);
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            transition: all 0.3s ease;
+        }
+
+        body.dark-mode {
+            --light: #0f172a;
+            --dark: #f8fafc;
+            --border: #334155;
+            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+        }
+
+        /* Responsive Container */
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+            width: 100%;
+        }
+
+        /* Auth Styles */
+        .auth-container {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .auth-card {
+            background: white;
+            border-radius: 24px;
+            padding: clamp(30px, 5vw, 50px);
+            width: 100%;
+            max-width: 450px;
+            box-shadow: var(--shadow-lg);
+            animation: slideUp 0.5s ease;
+        }
+
+        body.dark-mode .auth-card {
+            background: #1e293b;
+            color: white;
+        }
+
+        .logo {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .logo h1 {
+            font-size: clamp(28px, 6vw, 36px);
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--dark);
+        }
+
+        .form-group input, .form-group select, .form-group textarea {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid var(--border);
+            border-radius: 12px;
+            font-size: 16px;
+            transition: all 0.3s;
+            background: white;
+        }
+
+        body.dark-mode .form-group input,
+        body.dark-mode .form-group select,
+        body.dark-mode .form-group textarea {
+            background: #0f172a;
+            color: white;
+            border-color: #334155;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(99,102,241,0.1);
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            background: var(--primary);
+            color: white;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        /* Dashboard */
+        .dashboard {
+            display: none;
+        }
+
+        .navbar {
+            background: white;
+            border-radius: 16px;
+            padding: 16px 24px;
+            margin-bottom: 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+            box-shadow: var(--shadow-sm);
+        }
+
+        body.dark-mode .navbar {
+            background: #1e293b;
+        }
+
+        .nav-brand {
+            font-size: 24px;
+            font-weight: bold;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .nav-controls {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .theme-toggle {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 50%;
+            transition: all 0.3s;
+        }
+
+        .logout-btn {
+            background: var(--danger);
+        }
+
+        /* Course Cards Grid - Responsive */
+        .courses-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 24px;
+            margin-top: 24px;
+        }
+
+        .course-card {
+            background: white;
+            border-radius: 20px;
+            padding: 24px;
+            transition: all 0.3s;
+            cursor: pointer;
+            box-shadow: var(--shadow-sm);
+            animation: fadeIn 0.5s ease;
+        }
+
+        body.dark-mode .course-card {
+            background: #1e293b;
+            color: white;
+        }
+
+        .course-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .course-status {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            margin-top: 12px;
+        }
+
+        .status-completed { background: var(--secondary); color: white; }
+        .status-inprogress { background: var(--warning); color: white; }
+        .status-pending { background: var(--gray); color: white; }
+
+        /* Exam Interface */
+        .exam-container {
+            background: white;
+            border-radius: 20px;
+            padding: clamp(20px, 4vw, 30px);
+            margin-top: 20px;
+            animation: slideIn 0.3s ease;
+        }
+
+        body.dark-mode .exam-container {
+            background: #1e293b;
+            color: white;
+        }
+
+        .timer {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: var(--danger);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 50px;
+            font-size: clamp(16px, 4vw, 20px);
+            font-weight: bold;
+            z-index: 1000;
+            box-shadow: var(--shadow-md);
+            animation: pulse 2s infinite;
+        }
+
+        .question-area {
+            margin: 30px 0;
+        }
+
+        .question-text {
+            font-size: clamp(18px, 4vw, 22px);
+            font-weight: 600;
+            margin-bottom: 20px;
+            line-height: 1.4;
+        }
+
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .option {
+            display: flex;
+            align-items: center;
+            padding: 12px;
+            border: 2px solid var(--border);
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .option:hover {
+            background: rgba(99,102,241,0.1);
+            border-color: var(--primary);
+            transform: translateX(5px);
+        }
+
+        .option input {
+            margin-right: 12px;
+            transform: scale(1.2);
+            cursor: pointer;
+        }
+
+        .nav-buttons {
+            display: flex;
+            gap: 12px;
+            margin-top: 30px;
+            flex-wrap: wrap;
+        }
+
+        .nav-btn {
+            background: var(--gray);
+        }
+
+        .submit-btn {
+            background: var(--secondary);
+        }
+
+        /* Admin Panel */
+        .admin-panel {
+            display: none;
+        }
+
+        .admin-section {
+            background: white;
+            border-radius: 20px;
+            padding: 24px;
+            margin-bottom: 24px;
+            animation: fadeIn 0.5s ease;
+        }
+
+        body.dark-mode .admin-section {
+            background: #1e293b;
+        }
+
+        .question-list {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .question-item {
+            padding: 12px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .batch-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .batch-card {
+            background: var(--light);
+            border-radius: 12px;
+            padding: 15px;
+            border: 1px solid var(--border);
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 2000;
+            align-items: center;
+            justify-content: center;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            max-width: 90%;
+            width: 500px;
+            max-height: 80%;
+            overflow-y: auto;
+        }
+
+        body.dark-mode .modal-content {
+            background: #1e293b;
+        }
+
+        /* Animations */
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .container {
+                padding: 15px;
+            }
+            
+            .courses-grid {
+                grid-template-columns: 1fr;
+                gap: 16px;
+            }
+            
+            .timer {
+                top: 10px;
+                right: 10px;
+                padding: 8px 16px;
+                font-size: 14px;
+            }
+            
+            .nav-buttons {
+                flex-direction: column;
+            }
+            
+            .nav-buttons .btn {
+                width: 100%;
+            }
+            
+            .navbar {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .question-item {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .auth-card {
+                padding: 20px;
+            }
+            
+            .btn {
+                padding: 10px 20px;
+                font-size: 14px;
+            }
+            
+            .option {
+                padding: 10px;
+                font-size: 14px;
+            }
+        }
+
+        /* Loading Spinner */
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid var(--border);
+            border-top-color: var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Toast Notifications */
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: var(--secondary);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 12px;
+            z-index: 2000;
+            animation: slideUp 0.3s ease;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: var(--border);
+            border-radius: 4px;
+            overflow: hidden;
+            margin: 10px 0;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: var(--primary);
+            transition: width 0.3s ease;
+        }
+
+        .matric-hint {
+            font-size: 12px;
+            color: var(--gray);
+            margin-top: 5px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div id="app"></div>
+
+    <script>
+        // Application State
+        let currentUser = null;
+        let currentExam = null;
+        let currentBatch = 0;
+        let currentBatchQuestions = [];
+        let currentBatchIndex = 0;
+        let userAnswers = {};
+        let timerInterval = null;
+        let exams = [];
+        let questions = {};
+        let batches = {};
+
+        // Initialize Students with CORRECTED Matric Numbers: SCI24ICH001 to SCI24ICH300 and SCI25PSC001 to SCI25PSC300
+        const students = {};
+        
+        // SCI24ICH001 to SCI24ICH300 (300 students)
+        for (let i = 1; i <= 300; i++) {
+            const matric = `SCI24ICH${String(i).padStart(3, '0')}`;
+            students[matric] = { matric, password: "password", hasChangedPassword: false };
+        }
+        
+        // SCI25PSC001 to SCI25PSC300 (300 students)
+        for (let i = 1; i <= 300; i++) {
+            const matric = `SCI25PSC${String(i).padStart(3, '0')}`;
+            students[matric] = { matric, password: "password", hasChangedPassword: false };
+        }
+
+        // Sample Data
+        const sampleCourses = [
+            { id: 1, title: "Mathematics 101", duration: 60, totalQuestions: 20, batches: 2, questionsPerBatch: 10 },
+            { id: 2, title: "Physics Fundamentals", duration: 45, totalQuestions: 15, batches: 2, questionsPerBatch: 8 },
+            { id: 3, title: "Computer Science Basics", duration: 30, totalQuestions: 10, batches: 1, questionsPerBatch: 10 }
+        ];
+
+        // Helper Functions
+        function showToast(message, type = 'success') {
+            const toast = document.createElement('div');
+            toast.className = 'toast';
+            toast.style.background = type === 'success' ? 'var(--secondary)' : type === 'error' ? 'var(--danger)' : 'var(--warning)';
+            toast.textContent = message;
+            document.body.appendChild(toast);
+            setTimeout(() => toast.remove(), 3000);
+        }
+
+        function saveToLocalStorage() {
+            localStorage.setItem('quizent_exams', JSON.stringify(exams));
+            localStorage.setItem('quizent_questions', JSON.stringify(questions));
+            localStorage.setItem('quizent_batches', JSON.stringify(batches));
+        }
+
+        function loadFromLocalStorage() {
+            const storedExams = localStorage.getItem('quizent_exams');
+            const storedQuestions = localStorage.getItem('quizent_questions');
+            const storedBatches = localStorage.getItem('quizent_batches');
+            
+            if (storedExams) exams = JSON.parse(storedExams);
+            else exams = sampleCourses;
+            
+            if (storedQuestions) questions = JSON.parse(storedQuestions);
+            else {
+                questions = {};
+                // Initialize sample questions in batches
+                exams.forEach(exam => {
+                    questions[exam.id] = generateSampleQuestions(exam);
+                });
+            }
+            
+            if (storedBatches) batches = JSON.parse(storedBatches);
+            else {
+                batches = {};
+                exams.forEach(exam => {
+                    batches[exam.id] = splitIntoBatches(questions[exam.id] || [], exam.questionsPerBatch || 10);
+                });
+            }
+        }
+
+        function generateSampleQuestions(exam) {
+            const sampleQ = [];
+            for (let i = 1; i <= exam.totalQuestions; i++) {
+                sampleQ.push({
+                    id: i,
+                    text: `Sample Question ${i} for ${exam.title}`,
+                    options: [`Option A for Q${i}`, `Option B for Q${i}`, `Option C for Q${i}`, `Option D for Q${i}`],
+                    correct: Math.floor(Math.random() * 4)
+                });
+            }
+            return sampleQ;
+        }
+
+        function splitIntoBatches(questionArray, batchSize) {
+            const batches = {};
+            for (let i = 0; i < questionArray.length; i += batchSize) {
+                const batchNum = Math.floor(i / batchSize) + 1;
+                batches[batchNum] = questionArray.slice(i, i + batchSize);
+            }
+            return batches;
+        }
+
+        function checkTabSwitch() {
+            document.addEventListener('visibilitychange', () => {
+                if (document.hidden && currentExam) {
+                    showToast("⚠️ Warning: Tab switching detected! This may be recorded.", "warning");
+                }
+            });
+        }
+
+        function disableCopy() {
+            document.addEventListener('copy', (e) => {
+                if (currentExam) {
+                    e.preventDefault();
+                    showToast("❌ Copying is disabled during exam!", "warning");
+                }
+            });
+            document.addEventListener('contextmenu', (e) => {
+                if (currentExam) e.preventDefault();
+            });
+        }
+
+        // JSON Upload Handler
+        function uploadQuestionsJSON() {
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.accept = '.json';
+            
+            input.onchange = async (e) => {
+                const file = e.target.files[0];
+                const text = await file.text();
+                
+                try {
+                    const data = JSON.parse(text);
+                    const examId = parseInt(prompt("Enter Exam ID to upload questions to:", "1"));
+                    
+                    if (!exams.find(e => e.id === examId)) {
+                        showToast("❌ Exam not found!", "error");
+                        return;
+                    }
+                    
+                    if (!questions[examId]) questions[examId] = [];
+                    
+                    let newQuestions = [];
+                    if (data.questions && Array.isArray(data.questions)) {
+                        newQuestions = data.questions;
+                    } else if (Array.isArray(data)) {
+                        newQuestions = data;
+                    } else {
+                        showToast("❌ Invalid JSON format! Expected {questions: [...]} or array", "error");
+                        return;
+                    }
+                    
+                    // Add IDs to questions
+                    const startId = questions[examId].length + 1;
+                    newQuestions.forEach((q, idx) => {
+                        q.id = startId + idx;
+                        if (!q.options) q.options = ["Option A", "Option B", "Option C", "Option D"];
+                        if (q.correct === undefined) q.correct = 0;
+                    });
+                    
+                    questions[examId] = [...questions[examId], ...newQuestions];
+                    
+                    // Update exam total questions
+                    const exam = exams.find(e => e.id === examId);
+                    exam.totalQuestions = questions[examId].length;
+                    exam.batches = Math.ceil(questions[examId].length / (exam.questionsPerBatch || 10));
+                    
+                    // Re-split into batches
+                    batches[examId] = splitIntoBatches(questions[examId], exam.questionsPerBatch || 10);
+                    
+                    saveToLocalStorage();
+                    showToast(`✅ Successfully added ${newQuestions.length} questions!`);
+                    
+                    if (currentUser?.role === 'admin') {
+                        renderExamsList();
+                    }
+                } catch (error) {
+                    showToast("❌ Error parsing JSON file! Please check the format.", "error");
+                }
+            };
+            
+            input.click();
+        }
+
+        // Render Functions
+        function render() {
+            const app = document.getElementById('app');
+            if (!currentUser) {
+                renderAuth(app);
+            } else if (currentUser.role === 'admin') {
+                renderAdminPanel(app);
+            } else if (currentExam) {
+                renderExamInterface(app);
+            } else {
+                renderStudentDashboard(app);
+            }
+        }
+
+        function renderAuth(container) {
+            container.innerHTML = `
+                <div class="auth-container">
+                    <div class="auth-card">
+                        <div class="logo">
+                            <h1>🎯 QUIZENT</h1>
+                            <p style="color: var(--gray); margin-top: 10px;">Advanced Computer-Based Testing Platform</p>
+                        </div>
+                        <form id="loginForm">
+                            <div class="form-group">
+                                <label>Matric Number</label>
+                                <input type="text" id="matric" placeholder="e.g., SCI24ICH001 or SCI25PSC001" required autocomplete="off">
+                                <div class="matric-hint">
+                                    🔑 Valid formats: SCI24ICH001-SCI24ICH300 | SCI25PSC001-SCI25PSC300
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label>Password</label>
+                                <input type="password" id="password" placeholder="Enter password (default: password)" required>
+                            </div>
+                            <button type="submit" class="btn" style="width: 100%;">Login to Dashboard →</button>
+                        </form>
+                        <div style="margin-top: 20px; text-align: center;">
+                            <button onclick="showAdminLogin()" style="background: none; border: none; color: var(--primary); cursor: pointer;">🔐 Admin Login</button>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            document.getElementById('loginForm').addEventListener('submit', (e) => {
+                e.preventDefault();
+                const matric = document.getElementById('matric').value.toUpperCase().trim();
+                const password = document.getElementById('password').value;
+                
+                // Validate matric format
+                const isValidMatric = /^SCI(24ICH|25PSC)\d{3}$/.test(matric);
+                
+                if (!isValidMatric) {
+                    showToast("❌ Invalid Matric Number format! Use SCI24ICH001-SCI24ICH300 or SCI25PSC001-SCI25PSC300", "error");
+                    return;
+                }
+                
+                if (students[matric] && students[matric].password === password) {
+                    currentUser = { matric, name: `Student ${matric}`, role: 'student' };
+                    loadFromLocalStorage();
+                    render();
+                    showToast(`✅ Welcome ${matric}!`);
+                } else {
+                    showToast('❌ Invalid credentials! Please check your matric number and password.', 'error');
+                }
+            });
+        }
+
+        function showAdminLogin() {
+            const password = prompt("Enter Admin Password:");
+            if (password === "admin123") {
+                currentUser = { role: 'admin', name: 'Super Admin' };
+                render();
+                showToast("✅ Welcome Admin!");
+            } else {
+                showToast("❌ Invalid admin password!", "error");
+            }
+        }
+
+        function renderStudentDashboard(container) {
+            const completedExams = JSON.parse(localStorage.getItem(`quizent_results_${currentUser.matric}`) || '[]');
+            
+            container.innerHTML = `
+                <div class="container">
+                    <div class="navbar">
+                        <div class="nav-brand">🎯 QUIZENT</div>
+                        <div class="nav-controls">
+                            <span>👋 Welcome, ${currentUser.matric}</span>
+                            <button class="theme-toggle" onclick="toggleTheme()">🌓</button>
+                            <button class="btn logout-btn" onclick="logout()">Logout</button>
+                        </div>
+                    </div>
+                    <h2>📚 My Courses & Exams</h2>
+                    <div class="courses-grid">
+                        ${exams.map(exam => `
+                            <div class="course-card" onclick="startExam(${exam.id})">
+                                <h3>📖 ${exam.title}</h3>
+                                <p>⏱️ Duration: ${exam.duration} minutes</p>
+                                <p>📝 Questions: ${exam.totalQuestions}</p>
+                                <p>📦 Batches: ${exam.batches}</p>
+                                <div class="course-status status-${getExamStatus(exam.id, completedExams)}">
+                                    ${getExamStatusText(exam.id, completedExams)}
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            `;
+        }
+
+        function getExamStatus(examId, completedExams) {
+            if (completedExams.includes(examId)) return 'completed';
+            if (localStorage.getItem(`quizent_exam_${examId}_${currentUser.matric}`)) return 'inprogress';
+            return 'pending';
+        }
+
+        function getExamStatusText(examId, completedExams) {
+            if (completedExams.includes(examId)) return '✓ Completed';
+            if (localStorage.getItem(`quizent_exam_${examId}_${currentUser.matric}`)) return '▶ In Progress';
+            return '📋 Not Started';
+        }
+
+        function startExam(examId) {
+            const exam = exams.find(e => e.id === examId);
+            if (!exam) return;
+            
+            const savedState = localStorage.getItem(`quizent_exam_${examId}_${currentUser.matric}`);
+            if (savedState) {
+                const state = JSON.parse(savedState);
+                userAnswers = state.answers;
+                currentBatch = state.currentBatch;
+                currentBatchIndex = state.currentBatchIndex;
+            } else {
+                userAnswers = {};
+                currentBatch = 1;
+                currentBatchIndex = 0;
+            }
+            
+            currentExam = { ...exam, startTime: Date.now() };
+            currentBatchQuestions = batches[examId]?.[currentBatch] || [];
+            render();
+            startTimer(exam.duration * 60);
+        }
+
+        function startTimer(durationSeconds) {
+            if (timerInterval) clearInterval(timerInterval);
+            
+            let timeLeft = durationSeconds;
+            const savedTime = localStorage.getItem(`quizent_timer_${currentExam.id}_${currentUser.matric}`);
+            if (savedTime) {
+                const elapsed = Math.floor((Date.now() - parseInt(savedTime)) / 1000);
+                timeLeft = Math.max(0, durationSeconds - elapsed);
+            } else {
+                localStorage.setItem(`quizent_timer_${currentExam.id}_${currentUser.matric}`, Date.now().toString());
+            }
+            
+            timerInterval = setInterval(() => {
+                if (timeLeft <= 0) {
+                    clearInterval(timerInterval);
+                    submitExam();
+                } else {
+                    timeLeft--;
+                    const timerElement = document.getElementById('timer');
+                    if (timerElement) {
+                        const minutes = Math.floor(timeLeft / 60);
+                        const seconds = timeLeft % 60;
+                        timerElement.textContent = `⏱️ ${minutes}:${seconds.toString().padStart(2, '0')}`;
+                        
+                        if (timeLeft <= 60) {
+                            timerElement.style.animation = 'pulse 1s infinite';
+                        }
+                    }
+                }
+            }, 1000);
+        }
+
+        function renderExamInterface(container) {
+            const currentQ = currentBatchQuestions[currentBatchIndex];
+            if (!currentQ) {
+                nextBatch();
+                return;
+            }
+            
+            const totalInBatch = currentBatchQuestions.length;
+            const answeredInBatch = currentBatchQuestions.filter(q => userAnswers[q.id] !== undefined).length;
+            
+            container.innerHTML = `
+                <div id="timer" class="timer">⏱️ ${currentExam.duration}:00</div>
+                <div class="container">
+                    <div class="exam-container">
+                        <div style="margin-bottom: 20px;">
+                            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
+                                <span style="background: var(--primary); padding: 5px 12px; border-radius: 20px; color: white;">
+                                    📦 Batch ${currentBatch} of ${currentExam.batches}
+                                </span>
+                                <span>📊 Progress: ${answeredInBatch}/${totalInBatch} in this batch</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: ${(answeredInBatch/totalInBatch)*100}%"></div>
+                            </div>
+                        </div>
+                        
+                        <div class="question-area">
+                            <div class="question-text">
+                                Question ${currentBatchIndex + 1} of ${totalInBatch}
+                                <br><br>${currentQ.text}
+                            </div>
+                            <div class="options">
+                                ${currentQ.options.map((opt, idx) => `
+                                    <label class="option">
+                                        <input type="radio" name="question" value="${idx}" 
+                                            ${userAnswers[currentQ.id] == idx ? 'checked' : ''}
+                                            onchange="saveAnswer(${currentQ.id}, ${idx})">
+                                        <span>${String.fromCharCode(65+idx)}. ${opt}</span>
+                                    </label>
+                                `).join('')}
+                            </div>
+                        </div>
+                        
+                        <div class="nav-buttons">
+                            <button class="btn nav-btn" onclick="previousQuestion()" ${currentBatchIndex === 0 ? 'disabled' : ''}>← Previous</button>
+                            <button class="btn nav-btn" onclick="nextQuestion()">Next →</button>
+                            ${currentBatch === currentExam.batches && currentBatchIndex === totalInBatch - 1 ? 
+                                `<button class="btn submit-btn" onclick="submitExam()">✅ Submit Exam</button>` :
+                                `<button class="btn" onclick="nextBatch()" style="background: var(--info);">📦 Next Batch →</button>`
+                            }
+                        </div>
+                        
+                        <div style="margin-top: 20px; text-align: center; font-size: 14px; color: var(--gray);">
+                            <p>💡 Tip: You can review questions before moving to the next batch</p>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function saveAnswer(questionId, answer) {
+            userAnswers[questionId] = answer;
+            saveExamState();
+        }
+
+        function saveExamState() {
+            localStorage.setItem(`quizent_exam_${currentExam.id}_${currentUser.matric}`, JSON.stringify({
+                answers: userAnswers,
+                currentBatch: currentBatch,
+                currentBatchIndex: currentBatchIndex
+            }));
+        }
+
+        function nextQuestion() {
+            if (currentBatchIndex < currentBatchQuestions.length - 1) {
+                currentBatchIndex++;
+                render();
+            }
+        }
+
+        function previousQuestion() {
+            if (currentBatchIndex > 0) {
+                currentBatchIndex--;
+                render();
+            }
+        }
+
+        function nextBatch() {
+            if (currentBatch < currentExam.batches) {
+                currentBatch++;
+                currentBatchIndex = 0;
+                currentBatchQuestions = batches[currentExam.id]?.[currentBatch] || [];
+                saveExamState();
+                render();
+                showToast(`📦 Moving to Batch ${currentBatch}`);
+            }
+        }
+
+        function submitExam() {
+            if (timerInterval) clearInterval(timerInterval);
+            
+            const allQuestions = questions[currentExam.id] || [];
+            let score = 0;
+            for (let q of allQuestions) {
+                if (userAnswers[q.id] === q.correct) score++;
+            }
+            
+            const percentage = (score / allQuestions.length) * 100;
+            const result = {
+                examId: currentExam.id,
+                examTitle: currentExam.title,
+                score: score,
+                total: allQuestions.length,
+                percentage: percentage,
+                date: new Date().toISOString(),
+                answers: userAnswers
+            };
+            
+            const results = JSON.parse(localStorage.getItem(`quizent_results_${currentUser.matric}`) || '[]');
+            results.push(result);
+            localStorage.setItem(`quizent_results_${currentUser.matric}`, JSON.stringify(results));
+            
+            localStorage.removeItem(`quizent_exam_${currentExam.id}_${currentUser.matric}`);
+            localStorage.removeItem(`quizent_timer_${currentExam.id}_${currentUser.matric}`);
+            
+            showToast(`✅ Exam Submitted!\nScore: ${score}/${allQuestions.length} (${percentage.toFixed(2)}%)`);
+            
+            currentExam = null;
+            currentBatch = 0;
+            currentBatchIndex = 0;
+            userAnswers = {};
+            render();
+        }
+
+        function renderAdminPanel(container) {
+            container.innerHTML = `
+                <div class="container">
+                    <div class="navbar">
+                        <div class="nav-brand">🎯 QUIZENT - Admin Dashboard</div>
+                        <div class="nav-controls">
+                            <button class="theme-toggle" onclick="toggleTheme()">🌓</button>
+                            <button class="btn logout-btn" onclick="logout()">Logout</button>
+                        </div>
+                    </div>
+                    
+                    <div class="admin-section">
+                        <h2>📊 Analytics Dashboard</h2>
+                        <div id="stats"></div>
+                    </div>
+                    
+                    <div class="admin-section">
+                        <h2>📝 Manage Exams & Questions</h2>
+                        <div style="display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 20px;">
+                            <button class="btn" onclick="addExam()">+ Add New Exam</button>
+                            <button class="btn" onclick="uploadQuestionsJSON()" style="background: var(--info);">📤 Upload Questions (JSON)</button>
+                        </div>
+                        <div id="examsList"></div>
+                    </div>
+                    
+                    <div class="admin-section">
+                        <h2>📊 Export Results</h2>
+                        <button class="btn" onclick="exportResults()" style="background: var(--secondary);">📥 Download All Results (CSV)</button>
+                    </div>
+                </div>
+            `;
+            
+            renderExamsList();
+            renderAnalytics();
+        }
+
+        function renderExamsList() {
+            const container = document.getElementById('examsList');
+            if (!container) return;
+            
+            container.innerHTML = exams.map(exam => `
+                <div style="border: 1px solid var(--border); padding: 20px; margin-bottom: 20px; border-radius: 16px;">
+                    <h3>📚 ${exam.title}</h3>
+                    <p>⏱️ Duration: ${exam.duration} min | 📝 Total: ${exam.totalQuestions} questions</p>
+                    <p>📦 Batches: ${exam.batches} (${exam.questionsPerBatch || 10} questions per batch)</p>
+                    <div style="display: flex; gap: 10px; flex-wrap: wrap; margin-top: 15px;">
+                        <button class="btn" onclick="editExam(${exam.id})">✏️ Edit</button>
+                        <button class="btn" onclick="deleteExam(${exam.id})" style="background: var(--danger);">🗑️ Delete</button>
+                        <button class="btn" onclick="viewQuestions(${exam.id})" style="background: var(--info);">📋 View Questions</button>
+                        <button class="btn" onclick="manageBatches(${exam.id})" style="background: var(--secondary);">📦 Manage Batches</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function renderAnalytics() {
+            const stats = document.getElementById('stats');
+            const allResults = [];
+            for (let i = 0; i < localStorage.length; i++) {
+                const key = localStorage.key(i);
+                if (key && key.startsWith('quizent_results_')) {
+                    const results = JSON.parse(localStorage.getItem(key));
+                    allResults.push(...results);
+                }
+            }
+            
+            const avgScore = allResults.length ? (allResults.reduce((sum, r) => sum + r.percentage, 0) / allResults.length).toFixed(2) : 0;
+            const totalStudents = Object.keys(students).length;
+            
+            stats.innerHTML = `
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px;">
+                    <div style="padding: 20px; background: linear-gradient(135deg, var(--primary), var(--primary-dark)); color: white; border-radius: 16px;">
+                        <h3>👨‍🎓 Total Students</h3>
+                        <p style="font-size: 32px; font-weight: bold;">${totalStudents}</p>
+                    </div>
+                    <div style="padding: 20px; background: linear-gradient(135deg, var(--secondary), #059669); color: white; border-radius: 16px;">
+                        <h3>📝 Exams Taken</h3>
+                        <p style="font-size: 32px; font-weight: bold;">${allResults.length}</p>
+                    </div>
+                    <div style="padding: 20px; background: linear-gradient(135deg, var(--warning), #d97706); color: white; border-radius: 16px;">
+                        <h3>📊 Average Score</h3>
+                        <p style="font-size: 32px; font-weight: bold;">${avgScore}%</p>
+                    </div>
+                    <div style="padding: 20px; background: linear-gradient(135deg, var(--info), #2563eb); color: white; border-radius: 16px;">
+                        <h3>📚 Active Exams</h3>
+                        <p style="font-size: 32px; font-weight: bold;">${exams.length}</p>
+                    </div>
+                </div>
+            `;
+        }
+
+        function viewQuestions(examId) {
+            const examQuestions = questions[examId] || [];
+            let modalHtml = `
+                <div class="modal" id="questionModal" style="display: flex;">
+                    <div class="modal-content">
+                        <h2>📋 Questions for Exam ${examId}</h2>
+                        <div style="max-height: 400px; overflow-y: auto;">
+            `;
+            
+            examQuestions.forEach((q, idx) => {
+                modalHtml += `
+                    <div style="padding: 10px; border-bottom: 1px solid var(--border);">
+                        <strong>Q${idx+1}: ${q.text}</strong><br>
+                        <small>Options: ${q.options.join(', ')}</small><br>
+                        <small>✅ Correct: ${String.fromCharCode(65+q.correct)}</small>
+                    </div>
+                `;
+            });
+            
+            modalHtml += `
+                        </div>
+                        <button class="btn" onclick="closeModal()" style="margin-top: 20px;">Close</button>
+                    </div>
+                </div>
+            `;
+            
+            document.body.insertAdjacentHTML('beforeend', modalHtml);
+        }
+
+        function manageBatches(examId) {
+            const exam = exams.find(e => e.id === examId);
+            const questionsPerBatch = parseInt(prompt(`📦 Enter questions per batch for ${exam.title}:`, exam.questionsPerBatch || 10));
+            
+            if (questionsPerBatch && questionsPerBatch > 0) {
+                exam.questionsPerBatch = questionsPerBatch;
+                exam.batches = Math.ceil((questions[examId]?.length || 0) / questionsPerBatch);
+                batches[examId] = splitIntoBatches(questions[examId] || [], questionsPerBatch);
+                saveToLocalStorage();
+                renderExamsList();
+                showToast(`✅ Batches updated! Now ${exam.batches} batches with ${questionsPerBatch} questions each.`);
+            }
+        }
+
+        function addExam() {
+            const title = prompt("Enter exam title:");
+            const duration = parseInt(prompt("Enter duration (minutes):"));
+            const questionsPerBatch = parseInt(prompt("Enter questions per batch:", "10"));
+            
+            if (title && duration) {
+                const newId = exams.length + 1;
+                exams.push({ 
+                    id: newId, 
+                    title, 
+                    duration, 
+                    totalQuestions: 0, 
+                    batches: 0,
+                    questionsPerBatch: questionsPerBatch || 10
+                });
+                questions[newId] = [];
+                batches[newId] = {};
+                saveToLocalStorage();
+                renderExamsList();
+                renderAnalytics();
+                showToast(`✅ Exam "${title}" added successfully!`);
+            }
+        }
+
+        function editExam(id) {
+            const exam = exams.find(e => e.id === id);
+            if (!exam) return;
+            
+            exam.title = prompt("Enter new title:", exam.title) || exam.title;
+            exam.duration = parseInt(prompt("Enter new duration:", exam.duration)) || exam.duration;
+            exam.questionsPerBatch = parseInt(prompt("Enter questions per batch:", exam.questionsPerBatch)) || exam.questionsPerBatch;
+            exam.batches = Math.ceil((questions[id]?.length || 0) / exam.questionsPerBatch);
+            
+            saveToLocalStorage();
+            renderExamsList();
+            showToast("✅ Exam updated!");
+        }
+
+        function deleteExam(id) {
+            if (confirm("⚠️ Are you sure you want to delete this exam? This will remove all associated questions and results!")) {
+                exams = exams.filter(e => e.id !== id);
+                delete questions[id];
+                delete batches[id];
+                
+                // Remove results for this exam
+                for (let i = 0; i < localStorage.length; i++) {
+                    const key = localStorage.key(i);
+                    if (key && key.startsWith('quizent_results_')) {
+                        const results = JSON.parse(localStorage.getItem(key));
+                        const filtered = results.filter(r => r.examId !== id);
+                        localStorage.setItem(key, JSON.stringify(filtered));
+                    }
+                }
+                
+                saveToLocalStorage();
+                renderExamsList();
+                renderAnalytics();
+                showToast("✅ Exam deleted successfully!");
+            }
+        }
+
+        function exportResults() {
+            let csv = "Student,Exam,Score,Percentage,Date\n";
+            for (let i = 0; i < localStorage.length; i++) {
+                const key = localStorage.key(i);
+                if (key && key.startsWith('quizent_results_')) {
+                    const student = key.replace('quizent_results_', '');
+                    const results = JSON.parse(localStorage.getItem(key));
+                    for (const result of results) {
+                        csv += `"${student}","${result.examTitle}","${result.score}/${result.total}","${result.percentage.toFixed(2)}%","${new Date(result.date).toLocaleString()}"\n`;
+                    }
+                }
+            }
+            
+            const blob = new Blob([csv], { type: 'text/csv' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `quizent_results_${new Date().toISOString().split('T')[0]}.csv`;
+            a.click();
+            URL.revokeObjectURL(url);
+            showToast("📥 Results exported successfully!");
+        }
+
+        function closeModal() {
+            const modal = document.getElementById('questionModal');
+            if (modal) modal.remove();
+        }
+
+        function toggleTheme() {
+            document.body.classList.toggle('dark-mode');
+            localStorage.setItem('quizent_theme', document.body.classList.contains('dark-mode'));
+        }
+
+        function logout() {
+            currentUser = null;
+            currentExam = null;
+            if (timerInterval) clearInterval(timerInterval);
+            render();
+            showToast("👋 Logged out successfully!");
+        }
+
+        // Initialize Theme
+        function initTheme() {
+            const savedTheme = localStorage.getItem('quizent_theme');
+            if (savedTheme === 'true') {
+                document.body.classList.add('dark-mode');
+            }
+        }
+
+        // Expose functions globally
+        window.startExam = startExam;
+        window.saveAnswer = saveAnswer;
+        window.nextQuestion = nextQuestion;
+        window.previousQuestion = previousQuestion;
+        window.nextBatch = nextBatch;
+        window.submitExam = submitExam;
+        window.logout = logout;
+        window.toggleTheme = toggleTheme;
+        window.showAdminLogin = showAdminLogin;
+        window.addExam = addExam;
+        window.editExam = editExam;
+        window.deleteExam = deleteExam;
+        window.uploadQuestionsJSON = uploadQuestionsJSON;
+        window.viewQuestions = viewQuestions;
+        window.manageBatches = manageBatches;
+        window.exportResults = exportResults;
+        window.closeModal = closeModal;
+
+        // Initialize
+        loadFromLocalStorage();
+        checkTabSwitch();
+        disableCopy();
+        initTheme();
+        render();
+    </script>
+</body>
+</html>
